@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: bitnami/postgresql:latest
+    ports:
+      - '5433:5432'
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=fastify
+    volumes:
+      - fastify_pg_data:/bitnami/postgresql
+
+  redis:
+    image: bitnami/redis:latest
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6373:6379'
+    volumes:
+      - fastify_redis_data:/bitnami/redis/data
+
+volumes:
+  fastify_pg_data:
+  fastify_redis_data:
