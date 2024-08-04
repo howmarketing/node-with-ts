@@ -1,111 +1,135 @@
-# Feature Fastify
+# FEATURE PRISMA
 
-Implemented the Fastify server framework with routes.
+Implemented the Prisma ORM for database management.
 
 ## TODO
 
-- [x] Install Fastify.
-- [x] Set up Fastify server with TypeScript.
-- [x] Create server instance and start listening for requests.
-- [x] Register base route with endpoint `/`.
-- [x] Register users route with endpoint `/users`.
-- [x] Implement route registration logic in `src/routes/index.ts`.
+- [x] Install Prisma and its dependencies.
+- [x] Initialize Prisma schema.
+- [x] Create database models and migrations.
+- [x] Configure Prisma client in the application.
 
 ---
 
-# FEATURE FASTIFY
+## ABOUT PRISMA
 
-## ABOUT FASTIFY
+**Prisma ORM** is a powerful tool for simplifying database interactions in Node.js and TypeScript applications. Here are some key points about Prisma:
 
-FASTIFY is an efficient server implies a lower cost of the infrastructure, a better responsiveness under load and happy users. How can you efficiently handle the resources of your server, knowing that you are serving the highest number of requests possible, without sacrificing security validations and handy development?
+1. **Readable Data Model**: Prisma provides an intuitive data model that allows you to define your database schema using a clear and concise syntax. This makes it easier to work with your data and understand the relationships between tables.
 
-Enter Fastify. Fastify is a web framework highly focused on providing the best developer experience with the least overhead and a powerful plugin architecture. It is inspired by Hapi and Express and as far as we know, it is one of the fastest web frameworks in town.
+2. **Automated Migrations**: Prisma handles database migrations automatically. When you make changes to your data model, Prisma generates migration files that you can apply to your database. This ensures that your schema evolves seamlessly as your application grows.
 
-## INSTALLING FASTIFY
+3. **Type-Safety**: Prisma offers type-safe queries, which means you can write database queries using TypeScript or JavaScript without worrying about SQL syntax. The generated Prisma Client provides methods for querying, creating, updating, and deleting data, all with type-checking.
 
-To install Fastify, run the following command:
+4. **Global Cache and Connection Pool**: Prisma Accelerate includes a global cache and a scalable connection pool. This enables lightning-fast queries and efficient handling of database connections as your application scales¹.
+
+5. **Real-Time Functionality**: Prisma Pulse allows you to build reactive real-time applications with type-safe database subscriptions. You can easily react to changes in your database and trigger workflows based on events².
+
+6. **Flexible Stack Integration**: Prisma works seamlessly with various databases and frameworks. You can bring your own database and change your stack as needed, while Prisma ensures everything continues to function smoothly¹.
+
+## INSTALLING PRISMA
+
+To install Prisma ORM, run the following command:
 
 ```bash
-npm i fastify
+npm i prisma -D
 ```
 
-## USING FASTIFY
+## SETTING UP PRISMA
 
-To use Fastify with typescript, you can create a new Fastify instance and start listening for requests:
+To set up Prisma, follow these steps:
 
-**src/http/server.ts**
-```ts
-import fastify from 'fastify';
+**1. Initialize Prisma in your project:**
 
-export const app = fastify({
-    logger: true
-});
+```bash
+npx prisma init --datasource-provider SQLite
+```
 
-export const startServer = async () => {
-    console.log("starting server...")
-
-    try {
-        await app.listen({ port: 3333, host: '0.0.0.0' }, function (err, address) {
-            if (err) {
-                app.log.error(err)
-                process.exit(1)
-            }
-            app.log.info(`server listening on ${address}`)
-            console.log(`server started and listening on ${address}`)
-        });
-        
-    } catch (err) {
-        console.log(err);
-        app.log.error(err)
-        process.exit(1)
-    }
+**2. Edit your vscode settings with the following:**
+```json
+{
+    "[prisma]": {
+        "editor.formatOnSave": true
+    },
 }
 ```
 
-**src/index.ts**
-```ts
-import registerRoutes from "@routes/index"
-import { startServer } from "@http/server"
-
-registerRoutes()
-startServer()
+**3. Your .env should now look like this:**
+```bash
+DATABASE_URL="file:./dev.db"
+DB_HOST=localhost
+DB_USER=node-with-ts
+DB_PASSWORD=node-with-ts
+DB_NAME=node-with-ts
 ```
 
-**src/routes/index.ts**
-```ts
-import baseRouteRegister from "@routes/baseRoute"
-import usersRouteRegister from "@routes/users"
-
-console.log("Registering routes...")
-export default () => {
-    baseRouteRegister()
-    usersRouteRegister()
+**4. Create your Prisma schema:**
+```prisma
+generator client {
+  provider = "prisma-client-js"
 }
-```
 
-**src/routes/baseRoute.ts**
-```ts
-import { app } from "@http/server";
-
-export default () => {
-    console.log("Base route registered: /");
-    app.get('/', async (request, reply) => {
-        return { hello: 'world' }
-    })
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
-```
 
-**src/routes/users.ts**
-```ts
-import { app } from "@http/server";
+// npx prisma migrate dev
 
-export default () => {
-    console.log("Users route registered: /users");
-    app.get('/users', async (request, reply) => {
-        return { hello: 'users' }
-    })
+model Department {
+  id                        Int                         @id @default(autoincrement())
+  key                       String                      @unique
+  label                     String
+  Employee                  Employee[]
+  EmployeeDepartmentHistory EmployeeDepartmentHistory[]
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @default(now()) @updatedAt
+
+  // @@map("departments")
 }
+
+model Employee {
+  id                        Int                         @id @default(autoincrement())
+  publicId                  String                      @unique @default(uuid())
+  firstName                 String
+  lastName                  String
+  hireDate                  DateTime?                   @default(now())
+  isActive                  Boolean
+  department                Department?                 @relation(fields: [departmentKey], references: [key])
+  departmentKey             String?
+  phone                     String
+  address                   String
+  EmployeeDepartmentHistory EmployeeDepartmentHistory[]
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @default(now()) @updatedAt
+
+  // @@map("employees")
+}
+
+model EmployeeDepartmentHistory {
+  id              Int        @id @default(autoincrement())
+  employee        Employee   @relation(fields: [employeeId], references: [id])
+  employeeId      Int
+  department      Department @relation(fields: [departmentKey], references: [key])
+  departmentKey   String
+  departmentLabel String     @default("")
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @default(now()) @updatedAt
+
+  // @@map("employee_department_history")
+}
+
 ```
 
-> Feature Fastify successfully implemented
+**5. Run the migration:**
+```bash
+npx prisma migrate dev
+```
+
+**6. Open the Prisma Studio:**
+```bash
+npx prisma studio
+```
+
+> Feature prisma successfully installed and configured using the development database provided SQLite.
 > 
