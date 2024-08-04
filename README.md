@@ -44,24 +44,32 @@ Configure your `tsconfig.json` file based on the Node.js version you are targeti
 
 ```jsonc
 {
-  "compilerOptions": {
-    /* Language and Environment */
-    "target": "ES2022",                         /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-    "lib": ["ES2023"],                          /* Specify a set of bundled library declaration files that describe the target runtime environment. */
-
-    /* Modules */
-    "module": "node16",                         /* Specify what module code is generated. */
-
-    /* Interop Constraints */
-    "esModuleInterop": true,                    /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
-    "forceConsistentCasingInFileNames": true,   /* Ensure that casing is correct in imports. */
-
-    /* Type Checking */
-    "strict": true,                             /* Enable all strict type-checking options. */
-
-    /* Completeness */
-    "skipLibCheck": true                        /* Skip type checking all .d.ts files. */
-  }
+	"compilerOptions": {
+		"target": "ESNext", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+		"module": "CommonJS", /* Specify what module code is generated. */
+		"esModuleInterop": true, /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+		"forceConsistentCasingInFileNames": true, /* Ensure that casing is correct in imports. */
+		"strict": true, /* Enable all strict type-checking options. */
+		"skipLibCheck": true, /* Skip type checking all .d.ts files. */
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["src/*"],
+			"@controllers/*": ["src/controllers/*"],
+			"@database/*": ["src/database/*"],
+			"@http/*": ["src/http/*"],
+			"@routes/*": ["src/routes/*"],
+			"@utils/*": ["src/utils/*"],
+			"@services/*": ["src/services/*"],
+		}
+	},
+	"include": [
+		"./**/*.ts"
+	],
+	"exclude": [
+		"node_modules",
+		"dist",
+		"build"
+	]
 }
 ```
 
@@ -72,8 +80,8 @@ For more details on configuring `tsconfig.json`, refer to the [TypeScript Node T
 Create the necessary folders for your project:
 
 ```bash
-mkdir -p src/{http,database,routes,controllers,utils}
-touch src/index.ts src/http/server.ts src/database/index.ts src/routes/users.ts src/controllers/users.ts src/utils/app-error.ts
+mkdir -p src/{http,database,routes,controllers,utils,services}
+touch src/index.ts src/http/server.ts src/database/index.ts src/routes/users.ts src/controllers/users.ts src/utils/app-error.ts src/services/index.ts
 ```
 
 ### 6. Install and Configure `tsx` for Running TypeScript
@@ -90,11 +98,12 @@ Update the `scripts` section in your `package.json` to use `tsx`:
 
 ```json
 {
-  "name": "node-with-ts",
+  "name": "with-ts",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts --env-file .env.local"
+    "dev": "tsx watch --env-file .env.local src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -104,8 +113,12 @@ Update the `scripts` section in your `package.json` to use `tsx`:
     "@types/node": "^22.1.0",
     "tsx": "^4.16.5",
     "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "fastify": "^4.28.1"
   }
 }
+
 ```
 
 ### 7. Create Environment Configuration File
