@@ -1,10 +1,28 @@
+# Feature Fastify
+
+Implemented the Fastify server framework with routes.
+
+## TODO
+
+- [x] Install Fastify.
+- [x] Set up Fastify server with TypeScript.
+- [x] Create server instance and start listening for requests.
+- [x] Register base route with endpoint `/`.
+- [x] Register users route with endpoint `/users`.
+- [x] Implement route registration logic in `src/routes/index.ts`.
+
+---
+
 # FEATURE FASTIFY
+
+## ABOUT FASTIFY
 
 FASTIFY is an efficient server implies a lower cost of the infrastructure, a better responsiveness under load and happy users. How can you efficiently handle the resources of your server, knowing that you are serving the highest number of requests possible, without sacrificing security validations and handy development?
 
 Enter Fastify. Fastify is a web framework highly focused on providing the best developer experience with the least overhead and a powerful plugin architecture. It is inspired by Hapi and Express and as far as we know, it is one of the fastest web frameworks in town.
 
 ## INSTALLING FASTIFY
+
 To install Fastify, run the following command:
 
 ```bash
@@ -88,3 +106,6 @@ export default () => {
     })
 }
 ```
+
+> Feature Fastify successfully implemented
+> 
