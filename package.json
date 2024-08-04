@@ -1,0 +1,17 @@
+{
+  "name": "with-ts",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "tsx watch index.ts --env-file .env.local"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^22.1.0",
+    "tsx": "^4.16.5",
+    "typescript": "^5.5.4"
+  }
+}
