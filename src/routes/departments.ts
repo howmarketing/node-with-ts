@@ -28,37 +28,37 @@ export default () => {
         // Check if department already exists
         const departmentExists = await prisma.department.findUnique({ where: { key: data.key } });
         if(departmentExists) {
-            return {
+            return reply.status(400).send({
                 status: 'error',
                 message: `Department with key ${data.key} already exists.`,
                 meta: {moduleName: "Department", target: ["key"]},
                 statusCode: 400,
                 department: departmentExists
-            }
+            })
         }
 
         // Create department
         try {
             const department = await prisma.department.create({ data })
-            return {
+            return reply.status(201).send({
                 status: 'success',
                 message: `Department ${data.label} created successfully.`,
                 meta: {},
                 statusCode: 201,
                 department
-            }
+            })
         } catch (e: any) {
             let message = e?.message || 'Something went wrong. Could not create the department.';
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
                 message = `Something went wrong. Could not create the department`;
             }
-            return {
+            return reply.status(500).send({
                 status: 'error',
                 message,
                 meta: e?.meta || {},
                 statusCode: 500,
                 department: { id: 0, key: "", label: "", createdAt: new Date(), updatedAt: new Date() }
-            }
+            })
         }
     })
 }
