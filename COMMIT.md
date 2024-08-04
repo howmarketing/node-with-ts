@@ -1,61 +1,45 @@
-# FEATURE LIST EMPLOYEES
+# FEATURE LIST DEPARTMENTS
 
-Fetch employees from the database using the @prisma/client.
+Fetch departments from the database using the @prisma/client.
 
 ## TODO
 
-- [x] Provide the prisma database provider on `database/index.ts`;
-- [x] Create the GET route to fetch employees as `/employees`;
-- [x] Register the GET route `/employees` in `routes/index.ts`;
+- [x] Create the GET route to fetch departments as `/departments`;
+- [x] Register the GET route `/departments` in `routes/index.ts`;
 - [x] Test the route ensuring the correct behaviour and response.
 
 ---
 
-## Prisma database provider
+## Create the GET route to fetch departments as `/departments`
 
-**src/database/index.ts**
-```ts
-import { PrismaClient } from "@prisma/client";
-
-export const prisma = new PrismaClient({
-    log: ['query'],
-});
-```
-
-## Create the GET route to fetch employees as `/employees`
-
-**src/routes/employees.ts**
+**src/routes/departments.ts**
 ```ts
 import { app } from "@http/server";
 import { prisma } from "@database/index";
 
 export default () => {
-    console.log("Employees route registered: /employees");
-    app.get('/employees', async (request, reply) => {
-        const employees = await prisma.employee.findMany({
-            include: {
-                department: true,
-                EmployeeDepartmentHistory: true
-            }
-        });
-        return employees;
-        return { hello: 'employees' }
+    console.log("Departments route registered: /departments");
+    app.get('/departments', async (request, reply) => {
+        const departments = await prisma.department.findMany();
+        return departments;
     })
 }
 ```
 
-## Register the GET route `/employees` in `routes/index.ts`
+## Register the GET route `/departments` in `routes/index.ts`
 
 **src/routes/index.ts**
 ```ts
 import baseRouteRegister from "@routes/baseRoute"
 import usersRouteRegister from "@routes/users"
 import employeesRouteRegister from "@routes/employees"
+import departmentsRouteRegister from "@routes/departments"
 
 console.log("Registering routes...")
 export default () => {
     baseRouteRegister()
     usersRouteRegister()
     employeesRouteRegister()
+    departmentsRouteRegister()
 }
 ```
